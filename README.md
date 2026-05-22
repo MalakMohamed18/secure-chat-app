@@ -1,95 +1,81 @@
-# 🔐 Secure End-to-End Encrypted Messaging Web Application
+# 🔐 Secure End-to-End Encrypted Messaging App
 
-A modern, real-time full-stack messaging platform implementing **True End-to-End Encryption (E2EE)** using **Hybrid RSA Cryptography**.
-The architecture ensures that **private keys never leave the client device**, meaning no server, database administrator, or third party can decrypt user conversations.
+A modern, real-time full-stack messaging platform implementing **True End-to-End Encryption (E2EE)** using Hybrid RSA Cryptography. The architecture ensures that private keys never leave the client device — meaning no server, database administrator, or third party can decrypt user conversations.
 
 ---
 
 ## ✨ Features
 
-* 🔒 True End-to-End Encryption (E2EE)
-* ⚡ Real-time Messaging with Socket.io
-* 🧠 Hybrid RSA Encryption Architecture
-* 👤 Secure Authentication System
-* 💬 Persistent Chat History
-* 🎨 Smooth Modern UI with Animations
-* 📱 Responsive Design
-* 🛡️ Client-Side Private Key Storage
-* 🔄 Live User Presence & Messaging
-* 🌙 Clean and Scalable Full-Stack Architecture
+- 🔒 True End-to-End Encryption (E2EE)
+- ⚡ Real-time Messaging with Socket.io
+- 🧠 Hybrid RSA Encryption Architecture
+- 👤 Secure Authentication with JWT
+- 💬 Persistent Chat History
+- 🎨 Smooth Modern UI with CSS Animations
+- 📱 Responsive Design
+- 🛡️ Client-Side Private Key Storage
+- 🔄 Live User Presence & Messaging
+- 🌙 Clean and Scalable Full-Stack Architecture
 
 ---
 
-# 🛠️ Tech Stack
+## 🛠️ Tech Stack
 
-## Frontend
+### Frontend
 
-* **Framework:** Next.js 15+ (App Router)
-* **Styling:** Tailwind CSS
-* **Animations:** Framer Motion
-* **Real-Time Communication:** Socket.io-client
+| Technology | Purpose |
+|---|---|
+| Next.js 15+ (App Router) | Frontend Framework |
+| CSS Modules / Global CSS | Styling & Animations |
+| Framer Motion | UI Animations |
+| Socket.io-client | Real-Time Communication |
 
-## Backend
+### Backend
 
-* **Runtime:** Node.js
-* **Framework:** Express.js
-* **Database:** MongoDB + Mongoose ODM
-* **Real-Time Engine:** Socket.io
-
----
-
-# 🛡️ Encryption Architecture
-
-This application uses a **Dual Client-Side RSA Encryption Strategy** to ensure both sender and receiver can safely access their message history while maintaining complete server-side privacy.
+| Technology | Purpose |
+|---|---|
+| Node.js + Express.js | Server Runtime & API |
+| MongoDB + Mongoose | Database & ODM |
+| Socket.io | Real-Time Engine |
+| JWT (JSON Web Tokens) | Authentication & Authorization |
 
 ---
 
-## 🔑 1. Client-Side RSA Key Generation
+## 🛡️ Encryption Architecture
 
-Upon registration or secure login:
+This application uses a **Dual Client-Side RSA Encryption Strategy** to ensure both sender and receiver can safely access message history while maintaining complete server-side privacy.
 
-* A unique RSA Key Pair is generated:
+### 🔑 1. Client-Side RSA Key Generation
 
-  * `publicKey`
-  * `privateKey`
+Upon registration or secure login, a unique RSA Key Pair is generated:
 
-### Important Security Rule
+- `publicKey` → stored on the server
+- `privateKey` → **never leaves the browser**, stored securely in `localStorage`
 
-* ✅ Public key is stored on the server.
-* ❌ Private key NEVER leaves the browser.
-* 🔒 Private key is securely stored in:
-
-  ```bash
-  localStorage
-  ```
-
-This ensures zero server-side access to sensitive decryption credentials.
+This ensures **zero server-side access** to sensitive decryption credentials.
 
 ---
 
-## ✉️ 2. Dual Message Encryption
+### ✉️ 2. Dual Message Encryption
 
 When a user sends a message:
 
-### Step A — Fetch Public Keys
+**Step A — Fetch Public Keys**
 
 The frontend retrieves:
+- Recipient's public key
+- Sender's public key
 
-* Recipient public key
-* Sender public key
+**Step B — Encrypt Message Twice**
 
-### Step B — Encrypt Message Twice
-
-The plaintext message is encrypted into two separate ciphertexts:
-
-| Encryption Target    | Stored Field       |
-| -------------------- | ------------------ |
-| Recipient Public Key | `message`          |
-| Sender Public Key    | `messageForSender` |
+| Encryption Target | Stored Field |
+|---|---|
+| Recipient Public Key | `message` |
+| Sender Public Key | `messageForSender` |
 
 ---
 
-## 📦 3. Database Storage Strategy
+### 📦 3. Database Storage Strategy
 
 Example MongoDB Document:
 
@@ -102,58 +88,52 @@ Example MongoDB Document:
 }
 ```
 
-### Why This Matters
-
-* Receiver can decrypt incoming messages.
-* Sender can still read old sent messages later.
-* Database contents remain unreadable to administrators.
-
----
-
-## 🔓 4. Local Decryption
-
-All decryption occurs exclusively on the client side using the locally stored private key.
-
-### Result
-
-Even if:
-
-* The server is compromised
-* MongoDB is leaked
-* Network traffic is intercepted
-
-The attacker still cannot decrypt conversations.
+**Why This Matters:**
+- ✅ Receiver can decrypt incoming messages
+- ✅ Sender can still read old sent messages
+- ✅ Database contents remain unreadable to administrators
 
 ---
 
-# 📁 Project Structure
+### 🔓 4. Local Decryption
 
-```text
+All decryption occurs **exclusively on the client side** using the locally stored private key.
+
+> Even if the server is compromised, MongoDB is leaked, or network traffic is intercepted — **the attacker still cannot decrypt conversations.**
+
+---
+
+## 📁 Project Structure
+
+```
 secure-messaging-app/
 │
 ├── backend/
 │   ├── models/
 │   │   ├── User.js
 │   │   └── Message.js
-│   │
-│   ├── node_modules/
 │   ├── .env
 │   ├── package.json
 │   └── server.js
 │
 ├── frontend/
 │   ├── app/
+│   │   ├── chat/
+│   │   │   └── page.js
 │   │   ├── login/
 │   │   ├── register/
-│   │   └── chat/
-│   │
+│   │   ├── layout.tsx
+│   │   └── page.tsx
 │   ├── component/
 │   ├── services/
 │   │   ├── encrypt.js
 │   │   └── decrypt.js
-│   │
+│   ├── styles/
+│   ├── public/
+│   ├── globals.css
+│   ├── next.config.ts
 │   ├── package.json
-│   └── tailwind.config.js
+│   └── postcss.config.mjs
 │
 ├── package.json
 └── README.md
@@ -161,83 +141,61 @@ secure-messaging-app/
 
 ---
 
-# 🚀 Getting Started
+## 🚀 Getting Started
 
-## 📋 Prerequisites
+### 📋 Prerequisites
 
 Make sure you have installed:
 
-* Node.js (v18+ recommended)
-* MongoDB (Local or MongoDB Atlas)
-* npm or yarn
+- Node.js (v18+ recommended)
+- MongoDB (Local or MongoDB Atlas)
+- npm or yarn
 
 ---
 
-# ⚙️ Installation
+### ⚙️ Installation
 
-## 1️⃣ Clone Repository
+**1️⃣ Clone the Repository**
 
 ```bash
 git clone https://github.com/your-username/secure-messaging-app.git
 cd secure-messaging-app
 ```
 
----
+**2️⃣ Backend Environment Variables**
 
-## 2️⃣ Backend Environment Variables
-
-Create a `.env` file inside:
-
-```bash
-backend/.env
-```
-
-Add:
+Create a `.env` file inside `backend/`:
 
 ```env
 MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
 PORT=5000
 ```
 
----
-
-## 3️⃣ Install Dependencies
-
-### Root
+**3️⃣ Install Dependencies**
 
 ```bash
+# Root
 npm install
-```
 
-### Backend
+# Backend
+cd backend && npm install
 
-```bash
-cd backend
-npm install
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
+# Frontend
+cd frontend && npm install
 ```
 
 ---
 
-# 🔄 Concurrent Development Setup
+### 🔄 Concurrent Development Setup
 
-This project uses **concurrently** to run both frontend and backend servers from one terminal.
-
-Install dependency in the root folder:
+This project uses `concurrently` to run both servers from one terminal.
 
 ```bash
 npm install concurrently --save-dev
 ```
 
----
-
-## Root package.json
+Root `package.json`:
 
 ```json
 "scripts": {
@@ -247,85 +205,71 @@ npm install concurrently --save-dev
 
 ---
 
-# ▶️ Run The Application
-
-From the root directory:
+### ▶️ Run The Application
 
 ```bash
 npm run dev
 ```
 
----
-
-# 🌐 Application URLs
-
-| Service       | URL                                            |
-| ------------- | ---------------------------------------------- |
-| Frontend      | [http://localhost:3000](http://localhost:3000) |
-| Backend API   | [http://localhost:5000](http://localhost:5000) |
-| Socket Server | [http://localhost:5000](http://localhost:5000) |
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:5000 |
+| Socket Server | http://localhost:5000 |
 
 ---
 
-# 🔐 Security Notes
+## 🔐 Authentication
 
-## Perfect Forward Secrecy Behavior
+This app uses **JWT (JSON Web Tokens)** for secure authentication:
+
+- On login/register, the server issues a signed JWT
+- The token is stored client-side and sent with each request via `Authorization` headers
+- The server validates the token on protected routes
+
+---
+
+## 🔐 Security Notes
 
 Since private keys are stored locally:
 
-* Clearing browser storage removes access to old encrypted chats.
-* Switching devices without exporting keys prevents old message recovery.
+- Clearing browser storage removes access to old encrypted chats
+- Switching devices without exporting keys prevents old message recovery
 
-This behavior mirrors security principles used in applications like:
-
-* Signal
-* WhatsApp local encrypted backups
+> This behavior mirrors security principles used in **Signal** and **WhatsApp's** local encrypted backups.
 
 ---
 
-# 🧠 Future Improvements
+## 🧠 Future Improvements
 
-* ✅ Group Chats with Shared Session Keys
-* ✅ File & Media Encryption
-* ✅ Voice/Video Calls with WebRTC
-* ✅ JWT Authentication
-* ✅ Multi-Device Secure Sync
-* ✅ IndexedDB Secure Key Vault
-* ✅ Message Self-Destruction
-* ✅ Typing Indicators & Online Presence
+- [ ] Group Chats with Shared Session Keys
+- [ ] File & Media Encryption
+- [ ] Voice/Video Calls with WebRTC
+- [ ] Multi-Device Secure Sync
+- [ ] IndexedDB Secure Key Vault
+- [ ] Message Self-Destruction
+- [ ] Typing Indicators & Online Presence
 
 ---
 
-# 🤝 Contributing
+## 🤝 Contributing
 
-Pull requests are welcome.
-
-For major changes:
+Pull requests are welcome!
 
 1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to your branch
+2. Create your feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "feat: add your feature"`
+4. Push to your branch: `git push origin feature/your-feature`
 5. Open a Pull Request
 
 ---
 
-# 📜 License
+## 📜 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
 
 ---
 
-# 👨‍💻 Author
+## 👩‍💻 Author
 
 Developed with ❤️ by **Malak Mohamed**
-
----
-
-# 📌 Git Commands After Updating README
-
-```bash
-git add README.md
-git commit -m "Docs: Add professional README for Front & Back"
-git push origin main
-```
